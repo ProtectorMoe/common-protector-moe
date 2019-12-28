@@ -1,24 +1,5 @@
-# common-protector-moe
+护萌宝 electron版本
+===
+战舰少女R辅助工具
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+本工具由Node.js Typescript Electron Vue Element构成, 正在开发...
