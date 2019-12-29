@@ -20,5 +20,5 @@ yarn-error.log*
 *.sln
 *.sw?
 
-/main/*.js
-/main/*.js.map
+/main/**/*.js
+/main/**/*.js.map
