@@ -1,7 +1,7 @@
 const request = require('request');
 const zlibModel = require('zlib');
 
-interface PostmanOptions {
+export interface PostmanOptions {
     url: string,
     method?: string,
     params?: {},
@@ -12,21 +12,19 @@ interface PostmanOptions {
     zlib?: boolean
 }
 
-interface PostmanReturn {
+export interface PostmanReturn {
     buffer: Buffer,
     headers: Object,
     statusCode: string
 }
 
-interface CookieJar {
+export interface CookieJar {
     saveFromResponse: (url: string, cookies: Array<string>) => void,
     loadForRequest: (url: string) => Array<string>,
 }
 
 
-class Postman {
-    constructor() {return this;}
-
+export class Postman {
     private static cookieStore: Array<string> = [];
     jar: CookieJar = new class implements CookieJar {
         loadForRequest(url: string): Array<string> {
@@ -116,5 +114,3 @@ async function test() {
     });
     console.log(response)
 }
-
-test();

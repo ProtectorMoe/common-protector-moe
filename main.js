@@ -7,18 +7,18 @@ let worker;
 app.on("ready", () => {
     // 启动主窗口
     windowsMain = new BrowserWindow({
-        width: 800,
+        width: 1000,
         height: 600,
         webPreferences: {
             nodeIntegration: true,
         }
     });
-    windowsMain.loadURL("http://192.168.199.136:8080");
+    windowsMain.loadURL("http://localhost:8080");
     windowsMain.webContents.openDevTools();
     // 启动工作窗口
     worker = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 200,
+        height: 200,
         webPreferences: {
             nodeIntegration: true,
             webSecurity: false

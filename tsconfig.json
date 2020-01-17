@@ -7,7 +7,7 @@
     "experimentalDecorators": true, // 启用实验性的ES装饰器
     "jsx": "react", // 在 .tsx文件里支持JSX
     "sourceMap": true, // 是否生成map文件
-    "module": "amd", // 指定生成哪个模块系统代码
+    "module": "commonjs", // 指定生成哪个模块系统代码
     "noImplicitAny": false, // 是否默认禁用 any
     "removeComments": true, // 是否移除注释
     "types": [ //指定引入的类型声明文件，默认是自动引入所有声明文件，一旦指定该选项，则会禁用自动引入，改为只引入指定的类型声明文件，如果指定空数组[]则不引用任何文件

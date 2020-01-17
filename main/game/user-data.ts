@@ -14,9 +14,9 @@ interface UserInfo {
 }
 
 
-class UserData {
-    private static instance: UserData;
-    private constructor() {}
+export class UserData {
+    static instance: UserData;
+
     static getInstance(): UserData {
         if (!UserData.instance) UserData.instance = new UserData();
         return UserData.instance;
@@ -38,9 +38,6 @@ class UserData {
     }
 
 }
-
-module .exports = UserData;
-
 
 
 

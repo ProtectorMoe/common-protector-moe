@@ -1,8 +1,16 @@
-class NetSender {
-    private static ins: NetSender;
+import {GameConfig} from "../util/config";
+import {Postman, CookieJar} from "../util/postman";
+
+export class NetSender {
+    static ins: NetSender;
     private postman: Postman;
 
     static cookieStore: Array<string> = [];
+
+    static getInstance():NetSender {
+        if (!NetSender.ins) {NetSender.ins = new NetSender()}
+        return NetSender.ins;
+    }
 
     private constructor() {
         this.postman = new Postman()
@@ -20,14 +28,12 @@ class NetSender {
                 });
             });
     };
-    public static getInstance():NetSender {
-        if (!NetSender.ins) {NetSender.ins = new NetSender()}
-        return NetSender.ins;
-    }
+
 
     async getGameVersion() {
-
+        let data = await this.postman.connect({
+            url: GameConfig.getInstance().urlVersion
+        });
+        return data.buffer.toString()
     }
-
-
 }

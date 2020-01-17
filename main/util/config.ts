@@ -1,4 +1,4 @@
-class GameConfig {
+export class GameConfig {
     private static ins: GameConfig;
     private constructor() {};
     public static getInstance():GameConfig {
@@ -20,5 +20,3 @@ class GameConfig {
     loginHead: string;
     loginApiHead: string;
 }
-
-module.exports = GameConfig.getInstance();
