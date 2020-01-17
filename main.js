@@ -17,8 +17,8 @@ app.on("ready", () => {
     windowsMain.webContents.openDevTools();
     // 启动工作窗口
     worker = new BrowserWindow({
-        width: 200,
-        height: 200,
+        width: 1920,
+        height: 1080,
         webPreferences: {
             nodeIntegration: true,
             webSecurity: false

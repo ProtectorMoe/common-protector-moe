@@ -1,7 +1,7 @@
 const request = require('request');
 const zlibModel = require('zlib');
 
-export interface PostmanOptions {
+export interface YesHttpOptions {
     url: string,
     method?: string,
     params?: {},
@@ -12,7 +12,7 @@ export interface PostmanOptions {
     zlib?: boolean
 }
 
-export interface PostmanReturn {
+export interface YesHttpReturn {
     buffer: Buffer,
     headers: Object,
     statusCode: string
@@ -23,16 +23,23 @@ export interface CookieJar {
     loadForRequest: (url: string) => Array<string>,
 }
 
+export interface Interceptor {
+    onRequest: (url: string, options) => any;
+}
 
-export class Postman {
+
+export class YesHttp {
     private static cookieStore: Array<string> = [];
     jar: CookieJar = new class implements CookieJar {
         loadForRequest(url: string): Array<string> {
-            return Postman.cookieStore;
+            return YesHttp.cookieStore;
         }
         saveFromResponse(url: string, cookies: Array<string>): void {
-            Postman.cookieStore = cookies;
+            YesHttp.cookieStore = cookies;
         };
+    };
+    interceptor: Interceptor = new class implements Interceptor {
+        onRequest: (url, options) => any = (utl, options) => options;
     };
 
     getParamString(data) {
@@ -42,7 +49,7 @@ export class Postman {
         return `?${keys.join("&")}`
     }
 
-    public connect(options: PostmanOptions){
+    public connect(options: YesHttpOptions){
         const {
             url = "", method = "GET", body, form, params = {},
             headers = {
@@ -60,9 +67,10 @@ export class Postman {
             form,
             Cookie: (cookies || this.jar.loadForRequest(url) || []).join(";")
         };
-        return new Promise<PostmanReturn>((resolve, reject) => {
+        return new Promise<YesHttpReturn>((resolve, reject) => {
             const u = url + this.getParamString(params);
-            const r: PostmanReturn = {
+            this.interceptor.onRequest(u, defaultOption);
+            const r: YesHttpReturn = {
                 buffer: Buffer.from([]),
                 statusCode: "0",
                 headers: {}
@@ -93,9 +101,11 @@ export class Postman {
                     zlibModel.unzip(r.buffer, (error, result) => {
                         if (error) reject("unzip fail");
                         r.buffer = result;
+                        resolve(r)
                     })
+                } else {
+                    resolve(r)
                 }
-                resolve(r)
             })
         });
     }
@@ -104,13 +114,17 @@ export class Postman {
         this.jar = jar;
         return this;
     }
+
+    public setInterceptor(interceptor: Interceptor) {
+        this.interceptor = interceptor;
+        return this;
+    }
 }
 
 
 async function test() {
-    const postman = new Postman();
-    const response = await postman.connect({
+    const yesHttp = new YesHttp();
+    const response = await yesHttp.connect({
         url: "https://www.baidu.com/"
     });
-    console.log(response)
 }

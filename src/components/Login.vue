@@ -25,8 +25,8 @@
         data() {
             return {
                 user: {
-                    username: "",
-                    password: "",
+                    username: "posttester",
+                    password: "123456",
                     server: "0"
                 }
             }
