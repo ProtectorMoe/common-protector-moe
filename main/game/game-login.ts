@@ -1,6 +1,7 @@
 import {GameConfig} from "./game-config";
 import {NetSender} from "./net-sender";
 import {LoginServerListBean, LoginUserInfoBean} from "../bean/net/login-bean";
+import {UserData} from "./user-data";
 
 const Store = require('electron-store');
 
@@ -45,40 +46,10 @@ export class GameLogin {
 
     async checkToken(token: string) {
         const tokenBean: LoginUserInfoBean = await this.netSender.loginUserInfo(token);
-        return tokenBean.error == 0;
-    }
-
-    async firstLogin(): Promise<LoginServerListBean> {
-        // 获取游戏版本
-        const loginVersion = await this.netSender.getGameVersion();
-        this.gameConfig.version = loginVersion.version.newVersionId;
-        this.gameConfig.resVersion = loginVersion.version.DataVersion;
-        this.gameConfig.loginHead = loginVersion.loginServer;
-        this.gameConfig.loginApiHead = loginVersion.hmLoginServer;
-        // 验证token
-        const store = new Store();
-        let token = store.get(`${this.username}.token`) || "";
-        while (true) {
-            if (!token || token.length < 10) {
-                token = await this.getToken()
-            }
-            if (await this.checkToken(token)) {
-                store.set({
-                    default: this.username,
-                    [this.username]: {
-                        password: this.password,
-                        token: this.token
-                    }
-                });
-                break;
-            } else {
-                token = null;
-            }
+        if (tokenBean.error !== 0) {
+            throw new Error("第一次登录游戏失败:" + tokenBean.error)
         }
-        // 尝试登录游戏
-        return await this.netSender.gameLogin(token);
     }
-
 
     async getToken() {
         const data = {
@@ -92,4 +63,38 @@ export class GameLogin {
         if (loginBean.error !== 0) throw new Error(`登录失败, 错误代码${loginBean.error}`);
         return loginBean.access_token || loginBean.token;
     }
+
+    async firstLogin(): Promise<LoginServerListBean> {
+        // 获取游戏版本
+        const loginVersion = await this.netSender.getGameVersion();
+        this.gameConfig.version = loginVersion.version.newVersionId;
+        this.gameConfig.resVersion = loginVersion.version.DataVersion;
+        this.gameConfig.loginHead = loginVersion.loginServer;
+        this.gameConfig.loginApiHead = loginVersion.hmLoginServer;
+        // 验证token
+        const store = new Store();
+        let token = this.token || await this.getToken();
+        await this.checkToken(token);
+        store.set({
+            user: {
+                username: this.username,
+                password: this.password,
+                serverType: this.serverType
+            }
+        });
+        return await this.netSender.gameLogin(token);
+
+    }
+
+    async secondLogin() {
+        await this.netSender.indexLogin(this.gameConfig.userId);
+        // 加载基础数据
+        const userData = UserData.getInstance();
+        userData.parseUserData(await this.netSender.apiInitGame());
+        // 加载点数数据
+        const pveData = await this.netSender.pveGetPveData();
+        userData.pveDataInit(pveData);
+    }
+
+
 }

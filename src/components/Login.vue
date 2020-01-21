@@ -1,52 +1,153 @@
 <template>
-    <el-form class="login-form" label-width="60px">
-        <el-form-item label="账号:">
-            <el-input type="text" v-model="user.username"></el-input>
-        </el-form-item>
-        <el-form-item label="密码:">
-            <el-input type="password" v-model="user.password"></el-input>
-        </el-form-item>
-        <el-form-item label="服务器">
-            <el-select v-model="user.server" placeholder="请选择服务器">
-                <el-option label="Android" value="0"></el-option>
-                <el-option label="IOS" value="1"></el-option>
+    <div class="container">
+        <div class="ms-login">
+            <div class="ms-title">护萌宝</div>
+            <el-form :model="user" label-width="0px" class="ms-content">
+                <el-form-item prop="username">
+                    <el-input v-model="user.username" placeholder="username">
+                        <el-button slot="prepend" icon="el-icon-user-solid"></el-button>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input
+                            type="password"
+                            placeholder="password"
+                            v-model="user.password"
+                    >
+                        <el-button slot="prepend" icon="el-icon-unlock"></el-button>
+                    </el-input>
+
+                </el-form-item>
+                <el-form-item prop="server">
+                    <el-select placeholder="请选择服务器" v-model="defaultServer" style="width: 100%" value="0">
+                        <el-option label="Android" value="0"></el-option>
+                        <el-option label="IOS" value="1"></el-option>
+                    </el-select>
+
+                </el-form-item>
+
+                <el-form-item prop="login">
+                    <div class="login-btn">
+                        <el-button type="primary" @click="firstLogin">登录</el-button>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+
+        <el-dialog
+                title="请选择服务器"
+                :visible.sync="openServerList"
+                width="30%">
+            <el-select v-model="defaultServer" placeholder="请选择服务器" value="0">
+                <el-option
+                        v-for="item in serverList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
             </el-select>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="login">登录</el-button>
-            <el-button @click="user = {username: '', password: '', server: '0'}">重置</el-button>
-        </el-form-item>
-    </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="secondLogin">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
     export default {
         name: "Login",
+        mounted() {
+            if (window.global) {
+                window.electron.ipcRenderer.removeAllListeners('login-first');
+                window.electron.ipcRenderer.removeAllListeners('login-first-finish');
+                const store = new window.Store();
+                this.user = {
+                    username: store.get('user.username'),
+                    password: store.get('user.password'),
+                    serverType: store.get('user.serverType')
+                };
+                window.electron.ipcRenderer.on('login-first-finish', (_, args) => {
+                    if (args.error === 0) {
+                        this.defaultServer = args.value.defaultServer;
+                        this.serverList = [];
+                        args.value.serverList.forEach(value => {
+                            if (value['hadRole'] === 1) {
+                                this.serverList.push({
+                                    value: value.id,
+                                    label: value.name,
+                                    host: value.host
+                                })
+                            }
+                        });
+                        this.openServerList = true;
+                    } else {
+                        this.loading = false;
+                    }
+                })
+            }
+        },
         data() {
             return {
+                loading: false,
+                openServerList: false,
+                serverList: [],
+                defaultServer: '0',
                 user: {
-                    username: "posttester",
-                    password: "123456",
-                    server: "0"
+                    username: "",
+                    password: "",
+                    serverType: "0"
                 }
             }
         },
         methods: {
-            login() {
-                window.electron.ipcRenderer.send('login-first', this.user)
+            firstLogin() {
+                this.loading = true;
+                window.electron && window.electron.ipcRenderer.send('login-first', this.user)
+            },
+            secondLogin() {
+                this.openServerList = false;
+                const host = this.serverList.filter(value => value.value === this.defaultServer)[0].host;
+                window.electron && window.electron.ipcRenderer.send('login-second', host);
             }
-        }
+        },
+
     }
 </script>
 
 <style scoped>
-    .login-form {
-        width: 300px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
-        padding: 50px;
+    .container {
+        width: 100%;
+        height: 100%;
+        background: url(https://acg.toubiec.cn/acgurl?cid=acg&return=ssl) no-repeat center;
+        background-size: 100%;
+    }
+    .ms-title {
+        width: 100%;
+        line-height: 50px;
+        text-align: center;
+        font-size: 20px;
+        color: #303133;
+        border-bottom: 1px solid #ddd;
+    }
+    .ms-login {
         position: absolute;
-        top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        top: 50%;
+        width: 350px;
+        margin: -190px 0 0 -175px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.6);
+        overflow: hidden;
+    }
+    .ms-content {
+        padding: 30px 30px;
+    }
+    .login-btn {
+        text-align: center;
+    }
+    .login-btn button {
+        width: 100%;
+        height: 36px;
+        margin-bottom: 10px;
     }
 </style>

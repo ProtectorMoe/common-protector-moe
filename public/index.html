@@ -9,7 +9,10 @@
   </head>
   <body>
   <script>
-    global.electron = require('electron');
+    if (window.global) {
+      global.electron = require('electron');
+      global.Store = require('electron-store');
+    }
   </script>
     <div id="app"></div>
   </body>
