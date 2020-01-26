@@ -1,7 +1,9 @@
+const {ipcRenderer} = require('electron');
 import {GameConfig} from "./game-config";
 import {NetSender} from "./net-sender";
 import {LoginServerListBean, LoginUserInfoBean} from "../bean/net/login-bean";
 import {UserData} from "./user-data";
+import {UserDataBean} from "../bean/net/user-data-bean";
 
 const Store = require('electron-store');
 
@@ -66,12 +68,14 @@ export class GameLogin {
 
     async firstLogin(): Promise<LoginServerListBean> {
         // 获取游戏版本
+        ipcRenderer.send('loginText', '请求游戏版本...');
         const loginVersion = await this.netSender.getGameVersion();
         this.gameConfig.version = loginVersion.version.newVersionId;
         this.gameConfig.resVersion = loginVersion.version.DataVersion;
         this.gameConfig.loginHead = loginVersion.loginServer;
         this.gameConfig.loginApiHead = loginVersion.hmLoginServer;
         // 验证token
+        ipcRenderer.send('loginText', '请求用户token...');
         const store = new Store();
         let token = this.token || await this.getToken();
         await this.checkToken(token);
@@ -82,19 +86,20 @@ export class GameLogin {
                 serverType: this.serverType
             }
         });
+        ipcRenderer.send('loginText', '发送登录数据...');
         return await this.netSender.gameLogin(token);
-
     }
 
     async secondLogin() {
         await this.netSender.indexLogin(this.gameConfig.userId);
         // 加载基础数据
         const userData = UserData.getInstance();
-        userData.parseUserData(await this.netSender.apiInitGame());
+        const userDataBean: UserDataBean = await this.netSender.apiInitGame();
+        userData.parseUserData(userDataBean);
+        ipcRenderer.send('userData', userDataBean);
         // 加载点数数据
         const pveData = await this.netSender.pveGetPveData();
         userData.pveDataInit(pveData);
+        ipcRenderer.send('loginSecondFinish');
     }
-
-
 }

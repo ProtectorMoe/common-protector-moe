@@ -55,22 +55,21 @@ export class YesHttp {
             headers = {
                 "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 5.1.1; oppo a53 Build/LYZ28N)",
                 "Accept-Encoding": "identity"
-            },
-            cookies = [], zlib = false,
+            }, zlib = false,
         } = options;
         const defaultOption = {
             method,
             headers: {
                 ...headers,
+                cookie: this.jar.loadForRequest(url)
             },
             body: body !== undefined? JSON.stringify(body): undefined,
             form,
-            Cookie: (cookies || this.jar.loadForRequest(url) || []).join(";")
         };
         return new Promise<YesHttpReturn>((resolve, reject) => {
             const u = url + this.getParamString(params);
             this.interceptor.onRequest(u, defaultOption);
-            const r: YesHttpReturn = {
+            const response: YesHttpReturn = {
                 buffer: Buffer.from([]),
                 statusCode: "0",
                 headers: {}
@@ -78,33 +77,30 @@ export class YesHttp {
 
             const req = request(u, defaultOption);
             req.on('data', chunk => {
-                r.buffer = Buffer.concat([r.buffer, chunk]);
+                response.buffer = Buffer.concat([response.buffer, chunk]);
             });
 
             req.on('response', message => {
-                r.headers = message.headers;
-                r.statusCode = message.statusCode;
-                if (r.headers["set-cookie"]) {
-                    const c: Array<string> = r.headers["set-cookie"];
-                    const cc: Array<string> = [];
-                    c.forEach(value => {
-                        value.split(";").forEach(value1 => {
-                            cc.push(value1.trim())
-                        })
-                    });
-                    this.jar.saveFromResponse(url, cc);
+                response.headers = message.headers;
+                response.statusCode = message.statusCode;
+                if (response.headers["set-cookie"]) {
+                    const headersArray: Array<string> = response.headers["set-cookie"];
+                    this.jar.saveFromResponse(url, headersArray);
                 }
             });
 
+
             req.on('end', () => {
                 if(zlib) {
-                    zlibModel.unzip(r.buffer, (error, result) => {
-                        if (error) reject("unzip fail");
-                        r.buffer = result;
-                        resolve(r)
+                    zlibModel.unzip(response.buffer, (error, result) => {
+                        if (error) {
+                            throw new Error(`Unzip fail path:${url}`)
+                        }
+                        response.buffer = result;
+                        resolve(response)
                     })
                 } else {
-                    resolve(r)
+                    resolve(response)
                 }
             })
         });

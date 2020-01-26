@@ -7,8 +7,28 @@
 <script>
     export default {
         name: 'app',
-        components: {
+        mounted() {
+            if (window.global) {
+                this.$store.commit('init');
+                const ipcRenderer = window.electron.ipcRenderer;
+                [
+                    'updateUserResVo',
+                    'updateUserVo',
+                    'updateFleetVo',
+                    'updateUserShipVo',
+                    'updatePveExploreVo',
+                    'updateRepairDockVo',
+                    'updatePackages'
+                ].forEach(value => {
+                    ipcRenderer.removeAllListeners(value);
+                    (_ => {
+                        ipcRenderer.on(value, (_, args) => {
+                            this.$store.commit(value, args)
+                        })
+                    })()
+                })
 
+            }
         },
         data() {
             return {

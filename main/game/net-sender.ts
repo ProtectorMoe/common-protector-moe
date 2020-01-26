@@ -3,7 +3,7 @@ import {YesHttp, CookieJar, Interceptor} from "../util/yes-http";
 import {HmException} from "./hm-exception";
 import {LoginVersionBean, LoginBean, LoginUserInfoBean, LoginServerListBean} from "../bean/net/login-bean";
 import {encryptionHMAC, stringToMd5} from "../util/encryption";
-import {getSeedRandom} from "../util/util";
+import {GetSeedRandom} from "../util/util";
 import {UserDataBean} from "../bean/net/user-data-bean";
 import {PveBean} from "../bean/net/pve-bean";
 
@@ -24,12 +24,12 @@ export class NetSender {
         this.yesHttp = new YesHttp()
             .setCookieJar(new class implements CookieJar {
                 saveFromResponse: (url: string, cookies: Array<string>) => void = (url, cookies) => {
-                    if (url.indexOf("login") > 0) {
+                    if (url.indexOf("hmLogin") > 0) {
                         NetSender.cookieStore = cookies;
                     }
                 };
                 loadForRequest: (url: string) => Array<string> = (url => {
-                    if (url.indexOf("passport") > 0 || url.indexOf('login') > 0) {
+                    if (url.indexOf("passport") > 0 || url.indexOf('hmLogin') > 0) {
                         return [];
                     }
                     return NetSender.cookieStore
@@ -51,17 +51,14 @@ export class NetSender {
             });
     };
 
-    getTimeToken() {
-
-    }
 
     urlBuilder(path: string, extra?: any, head?: string): string {
         const key = "ade2688f1904e9fb8d2efdb61b5e398a";
         const t = new Date().getTime();
         const e = stringToMd5(t + key);
-        const end = {t, e, gz: 1, market: 2, channel: gameConfig.channel, version: gameConfig.version, ...extra};
+        const end = {...extra, t, e, gz: 1, market: 2, channel: gameConfig.channel, version: gameConfig.version};
         const keys = Object.keys(end).map(key => `${key}=${end[key]}`);
-        return head || gameConfig.host + path + `&${keys.join("&")}`;
+        return (head || gameConfig.host) + path + `&${keys.join("&")}`;
     }
 
 
@@ -124,12 +121,12 @@ export class NetSender {
             phone_version: "5.1.1",
             ratio: "1920*1080",
             service: "CHINA%20MOBILE",
-            udid: getSeedRandom(parseInt(gameConfig.userId), 10000000000000000, 999999999999999),
+            udid: GetSeedRandom(parseInt(gameConfig.userId), 10000000000000000, 999999999999999),
             source: "android",
             affiliate: "WIFI",
         };
         const request = await this.yesHttp.connect({
-            url: this.urlBuilder(`index/hmLogin/${userId}`, params),
+            url: this.urlBuilder(`index/login/${userId}?`, params),
             zlib: true
         });
         return HmException.parse('indexLogin', request.buffer.toString());

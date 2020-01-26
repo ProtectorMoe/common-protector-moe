@@ -33,7 +33,8 @@
   },
   // 指定一个匹配列表（属于自动指定该路径下的所有ts相关文件）
   "include": [
-    "./main/"
+    "./main/",
+    "./src/store/"
   ],
   "exclude": [
     "/node_modules"

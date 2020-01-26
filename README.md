@@ -8,12 +8,13 @@
 在debug时使用命令
 ```shell script
 npm server 
+tsc -w
 ```
 运行Vue前端服务
 
 然后使用
 ```shell script
-npm run dev
+npm run electron
 ```
 启动electron窗口服务
 

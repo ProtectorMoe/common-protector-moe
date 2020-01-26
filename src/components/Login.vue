@@ -2,7 +2,11 @@
     <div class="container">
         <div class="ms-login">
             <div class="ms-title">护萌宝</div>
-            <el-form :model="user" label-width="0px" class="ms-content">
+            <el-form :model="user"
+                     label-width="0px"
+                     class="ms-content"
+                     v-loading="loading"
+                     :element-loading-text=loadingText>
                 <el-form-item prop="username">
                     <el-input v-model="user.username" placeholder="username">
                         <el-button slot="prepend" icon="el-icon-user-solid"></el-button>
@@ -58,15 +62,17 @@
         name: "Login",
         mounted() {
             if (window.global) {
-                window.electron.ipcRenderer.removeAllListeners('login-first');
-                window.electron.ipcRenderer.removeAllListeners('login-first-finish');
+                const ipcRenderer = window.electron.ipcRenderer;
+                ipcRenderer.removeAllListeners('loginFirstFinish');
+                ipcRenderer.removeAllListeners('loginSecondFinish');
+                ipcRenderer.removeAllListeners('loginText');
                 const store = new window.Store();
                 this.user = {
                     username: store.get('user.username'),
                     password: store.get('user.password'),
                     serverType: store.get('user.serverType')
                 };
-                window.electron.ipcRenderer.on('login-first-finish', (_, args) => {
+                ipcRenderer.on('loginFirstFinish', (_, args) => {
                     if (args.error === 0) {
                         this.defaultServer = args.value.defaultServer;
                         this.serverList = [];
@@ -81,14 +87,25 @@
                         });
                         this.openServerList = true;
                     } else {
+                        console.log(args);
                         this.loading = false;
                     }
+                });
+                ipcRenderer.on('loginSecondFinish', _ => {
+                    this.$router.push('/dashboard')
+                });
+                ipcRenderer.on('loginText', (_, args) => {
+                    this.loadingText = args;
                 })
+
+            } else {
+                console.log('浏览器调试模式');
             }
         },
         data() {
             return {
                 loading: false,
+                loadingText: "准备中...",
                 openServerList: false,
                 serverList: [],
                 defaultServer: '0',
@@ -102,14 +119,21 @@
         methods: {
             firstLogin() {
                 this.loading = true;
-                window.electron && window.electron.ipcRenderer.send('login-first', this.user)
+                window.electron && window.electron.ipcRenderer.send('loginFirst', this.user)
             },
             secondLogin() {
                 this.openServerList = false;
                 const host = this.serverList.filter(value => value.value === this.defaultServer)[0].host;
-                window.electron && window.electron.ipcRenderer.send('login-second', host);
+                window.electron && window.electron.ipcRenderer.send('loginSecond', host);
             }
         },
+        destroy() {
+            if (window.global) {
+                const ipcRenderer = window.electron.ipcRenderer;
+                ipcRenderer.removeAllListeners('loginFirstFinish');
+                ipcRenderer.removeAllListeners('loginSecondFinish');
+            }
+        }
 
     }
 </script>

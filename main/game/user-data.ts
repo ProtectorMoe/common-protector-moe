@@ -1,13 +1,17 @@
 import {PveBean, PveBuff, PveLevel, PveNode} from "../bean/net/pve-bean";
 import {
+    EquipmentVo,
     FleetVo,
     PackageVo,
     PveExploreLevels,
     RepairDockVo, ShipVO,
     TaskVo,
-    UpdateTaskVo, UserDataBean, UserResVo,
+    UpdateTaskVo, UserDataBean,
     UserShipVO, UserVo
 } from "../bean/net/user-data-bean";
+import {MapToObject} from "../util/util";
+
+const {ipcRenderer} = require('electron');
 
 export class UserData {
     static instance: UserData;
@@ -28,6 +32,7 @@ export class UserData {
         this.repairDockVoInit(userData.repairDockVo);
         this.unlockedShipInit(userData.unlockShip);
         this.taskVoInit(userData.taskVo);
+        ipcRenderer.send('updateUserVo', userData.userVo);
     }
 
     // ----------------- 点数数据 -----------------
@@ -44,25 +49,31 @@ export class UserData {
     fleetVo: Map<string, FleetVo> = new Map<string, FleetVo>();
     fleetVoInit(fleetVos: Array<FleetVo>) {
         this.fleetVo.clear();
-        fleetVos.forEach(value => this.fleetVo.set(value.id, value))
+        fleetVos.forEach(value => this.fleetVo.set(value.id, value));
+        ipcRenderer.send('updateFleetVo', MapToObject(this.fleetVo));
     }
     // -------------------用户船只------------------
     userShipVo: Map<number, UserShipVO> = new Map<number, UserShipVO>();
     userShipVoInit(ships: Array<ShipVO | UserShipVO>) {
         ships.forEach(value => this.userShipVo.set(value.id, value));
+        console.log(this.userShipVo);
+        ipcRenderer.send('updateUserShipVo', MapToObject(this.userShipVo));
     }
     userShipAdd(ship: UserShipVO | ShipVO) {
         this.userShipVo.set(ship.id, ship);
+        ipcRenderer.send('updateUserShipVo', MapToObject(this.userShipVo));
     }
     userShipDel(ships: Array<UserShipVO | ShipVO>) {
-        ships.forEach(value => this.userShipVo.delete(value.id))
+        ships.forEach(value => this.userShipVo.delete(value.id));
+        ipcRenderer.send('updateUserShipVo', MapToObject(this.userShipVo));
     }
 
     // ----------------------远征数据-----------------
     pveExploreVo: Map<string, PveExploreLevels> = new Map<string, PveExploreLevels>();
     pveExploreVoInit(explores: Array<PveExploreLevels>) {
         this.pveExploreVo.clear();
-        explores.forEach(value => this.pveExploreVo.set(value.exploreId, value))
+        explores.forEach(value => this.pveExploreVo.set(value.exploreId, value));
+        ipcRenderer.send('updatePveExploreVo', MapToObject(this.pveExploreVo));
     }
     // ---------------------已经拥有船只信息-------------------
     unlockedShip: Array<string> = new Array<string>();
@@ -74,11 +85,13 @@ export class UserData {
     repairDockVo: Array<RepairDockVo> = new Array<RepairDockVo>();
     repairDockVoInit(docks: Array<RepairDockVo>) {
         this.repairDockVo = docks;
+        ipcRenderer.send('updateRepairDockVo', this.repairDockVo);
     }
     // ---------------------package的数据----------------------
     packages: Map<number, number> = new Map<number, number>();
     packagesInit(packagesVo: Array<PackageVo>) {
-        packagesVo.forEach(value => this.packages.set(value.itemCid, value.num))
+        packagesVo.forEach(value => this.packages.set(value.itemCid, value.num));
+        ipcRenderer.send('updatePackages', MapToObject(this.packages));
     }
     // ------------------------ 任务数据 --------------------------
     taskVo: Map<string, TaskVo> = new Map<string, TaskVo>();
@@ -91,9 +104,19 @@ export class UserData {
             task.condition = value.condition;
         })
     }
-
-
-
+    // ------------------------ 装备数据 --------------------------
+    equipmentVo: Map<number, EquipmentVo> = new Map<number, EquipmentVo>();
+    equipmentVoInit(equipmentVos: Array<EquipmentVo>) {
+        equipmentVos.forEach(value => this.equipmentVo.set(value.equipmentCid, value));
+        ipcRenderer.send('updateUserShipVo', this.userShipVo);
+    }
+    equipmentVoGetSize(): number {
+        let sum = 0;
+        this.equipmentVo.forEach((value) => {
+            sum += value.num;
+        });
+        return sum
+    }
 }
 
 

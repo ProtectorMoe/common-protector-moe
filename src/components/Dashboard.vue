@@ -1,7 +1,6 @@
 <template>
     <div>
         <el-row :gutter="20">
-
 <!--            左边内容-->
             <el-col :span="10">
 <!--                用户数据-->
@@ -9,8 +8,8 @@
                     <div class="user-info">
                         <el-avatar shape="square" src="http://q1.qlogo.cn/g?b=qq&nk=805757448&s=640" class="user-avator"/>
                         <div class="user-info-cont">
-                            <div class="user-info-name">不咕鸟</div>
-                            <div>我说我要咕，然后我咕了，这何尝是一种不咕</div>
+                            <div class="user-info-name">{{$store.state.userVo.username}}</div>
+                            <div>Lv.{{$store.state.userVo.level}}</div>
                         </div>
                     </div>
 
@@ -18,44 +17,44 @@
                         <el-col :span="12">
                             <div class="user-info-list">
                                 <img src="../assets/img/oil.png" height="22" width="22">
-                                <span>10000</span>
-                                <span>+500</span>
+                                <span>{{$store.state.userResVo.oil}}</span>
+                                <span>{{oilChange}}</span>
                             </div>
                             <div class="user-info-list">
                                 <img src="../assets/img/ammo.png" height="22" width="22">
-                                <span>10000</span>
-                                <span>+500</span>
+                                <span>{{$store.state.userResVo.ammo}}</span>
+                                <span>{{ammoChange}}</span>
                             </div>
                             <div class="user-info-list">
                                 <img src="../assets/img/steel.png" height="22" width="22">
-                                <span>10000</span>
-                                <span>+500</span>
+                                <span>{{$store.state.userResVo.steel}}</span>
+                                <span>{{steelChange}}</span>
                             </div>
                             <div class="user-info-list">
                                 <img src="../assets/img/aluminium.png" height="22" width="22">
-                                <span>10000</span>
-                                <span>+500</span>
+                                <span>{{$store.state.userResVo.aluminium}}</span>
+                                <span>{{aluminiumChange}}</span>
                             </div>
                         </el-col>
                         <el-col :span="12">
                             <div class="user-info-list">
                                 <img src="../assets/img/ship.png" height="22" width="22">
-                                <span>120 / 120</span>
+                                <span>{{$store.state.userShipVo.size}} / {{$store.state.userVo.shipNumTop}}</span>
                             </div>
                             <div class="user-info-list">
                                 <img src="../assets/img/equipment.png" height="22" width="22">
-                                <span>500 / 500</span>
+                                <span>{{500}} / {{$store.state.userVo.equipmentNumTop}}</span>
                             </div>
 
                             <div class="user-version">
                                 <table>
                                     <tr>
                                         <td style="width:50px;">Version</td>
-                                        <td>1.0.0.0</td>
+                                        <td>{{$store.state.selfInfo.version}}</td>
                                     </tr>
                                     <tr>
                                         <td>Game</td>
-                                        <td>5.0</td>
+                                        <td>{{$store.state.selfInfo.gameVersion}}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -70,7 +69,7 @@
                         <span>任务列表</span>
                     </div>
                     <el-table
-                            :data="taskList"
+                            :data="$store.state.taskList"
                             :show-header="false"
                             style="width: 100%">
                         <el-table-column width="40">
@@ -116,7 +115,7 @@
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-1">
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">300</div>
+                                    <div class="grid-num">{{$store.state.counter.challengeNum}}</div>
                                     <div>出征数</div>
                                 </div>
                             </div>
@@ -126,7 +125,7 @@
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-2">
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">500</div>
+                                    <div class="grid-num">{{$store.state.counter.battleNum}}</div>
                                     <div>战斗数</div>
                                 </div>
                             </div>
@@ -136,7 +135,7 @@
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-3">
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">500</div>
+                                    <div class="grid-num">{{$store.state.counter.nodeNum}}</div>
                                     <div>节点数</div>
                                 </div>
                             </div>
@@ -146,7 +145,7 @@
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-1">
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">300</div>
+                                    <div class="grid-num">{{$store.state.counter.finishNum}}</div>
                                     <div>完成数</div>
                                 </div>
                             </div>
@@ -156,7 +155,7 @@
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-2">
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">0</div>
+                                    <div class="grid-num">{{$store.state.counter.SLNum}}</div>
                                     <div>SL数</div>
                                 </div>
                             </div>
@@ -164,9 +163,9 @@
                     </el-col>
                     <el-col :span="4">
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
-                            <div class="grid-content grid-con-2">
+                            <div class="grid-content grid-con-3">
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">50</div>
+                                    <div class="grid-num">{{$store.state.counter.dpoilsNum}}</div>
                                     <div>今日战利品</div>
                                 </div>
                             </div>
@@ -180,7 +179,7 @@
                         <span>日志</span>
                     </div>
                     <el-table
-                            :data="logData"
+                            :data="$store.state.logList"
                             :show-header="false"
                             :row-class-name="getTableClass"
                             style="width: 100%; overflow-x: hidden;">
@@ -220,50 +219,6 @@ export default {
             logCard: {
                 height: 503
             },
-            taskList: [
-                {
-                    name: "6-1炸鱼",
-                    num: "10/500",
-                    fleet: "第一舰队",
-                    state: true
-                },
-                {
-                    name: "4-3偷铝",
-                    num: "0/500",
-                    fleet: "单猫队",
-                    state: true
-                }
-            ],
-            logData: [
-                {
-                    date: "1/21",
-                    time: "19:19:19",
-                    title: "主线程",
-                    dec: "主线程开启",
-                    type: ""
-                },
-                {
-                    date: "1/21",
-                    time: "19:20:19",
-                    title: "任务",
-                    dec: "开始任务: [6-1炸鱼]",
-                    type: "success-row"
-                },
-                {
-                    date: "1/21",
-                    time: "19:21:19",
-                    title: "出征",
-                    dec: `1-5 点 A 评价:SS 出船:<戈本>`,
-                    type: ""
-                },
-                {
-                    date: "1/21",
-                    time: "19:21:19",
-                    title: "出征",
-                    dec: `出新船 <戈本>`,
-                    type: "danger-row"
-                },
-            ]
         };
     },
     mounted() {
@@ -271,13 +226,6 @@ export default {
         this.autoSetHeight();
     },
     methods: {
-        changeDate() {
-            const now = new Date().getTime();
-            this.data.forEach((item, index) => {
-                const date = new Date(now - (6 - index) * 86400000);
-                item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-            });
-        },
         getTableClass({row}) {
             return row.type
         },
@@ -293,7 +241,25 @@ export default {
             const log = document.getElementById('log-list');
             this.logCard.height = document.body.clientHeight - this.getTop(log) - 25;
         }
-}
+    },
+    computed: {
+        oilChange() {
+            const num = this.$store.state.userResVo.oil - this.$store.state.userVo.oil;
+            return `${num >=0? "+": ""}${num}`
+        },
+        ammoChange() {
+            const num = this.$store.state.userResVo.ammo - this.$store.state.userVo.ammo;
+            return `${num >=0? "+": ""}${num}`
+        },
+        steelChange() {
+            const num = this.$store.state.userResVo.steel - this.$store.state.userVo.steel;
+            return `${num >=0? "+": ""}${num}`
+        },
+        aluminiumChange() {
+            const num = this.$store.state.userResVo.aluminium - this.$store.state.userVo.aluminium;
+            return `${num >=0? "+": ""}${num}`
+        },
+    }
 };
 </script>
 
@@ -318,34 +284,16 @@ export default {
     font-weight: bold;
 }
 
-.grid-con-icon {
-    font-size: 50px;
-    width: 100px;
-    height: 100px;
-    text-align: center;
-    line-height: 100px;
-    color: #fff;
-}
-
-.grid-con-1 .grid-con-icon {
-    background: rgb(45, 140, 240);
-}
 
 .grid-con-1 .grid-num {
     color: rgb(45, 140, 240);
 }
 
-.grid-con-2 .grid-con-icon {
-    background: rgb(100, 213, 114);
-}
 
 .grid-con-2 .grid-num {
-    color: rgb(45, 140, 240);
+    color: rgb(100, 213, 114);
 }
 
-.grid-con-3 .grid-con-icon {
-    background: rgb(242, 94, 67);
-}
 
 .grid-con-3 .grid-num {
     color: rgb(242, 94, 67);
@@ -354,7 +302,7 @@ export default {
 .user-info {
     display: flex;
     align-items: center;
-    padding-bottom: 20px;
+    padding-bottom: 8px;
     border-bottom: 2px solid #ccc;
     margin-bottom: 5px;
 }

@@ -23,6 +23,9 @@ yarn-error.log*
 /main/**/*.js
 /main/**/*.js.map
 
+/src/store/**/*.js
+/src/store/**/*.js.map
+
 *.d.ts
 
 test.*

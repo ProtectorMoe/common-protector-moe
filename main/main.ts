@@ -8,7 +8,7 @@ class APP {
     static WORKER_TO_WINDOWS = 1;
 
     constructor() {
-        this.main.on("ready", () => {
+        this.main.on('ready', () => {
             // 启动主窗口
             this.windowsMain = new BrowserWindow({
                 width: 1280,
@@ -31,8 +31,12 @@ class APP {
             });
             this.worker.loadFile("./main/page/worker.html");
             this.worker.webContents.openDevTools();
-            this.rout();
 
+            ipcMain.on('updateRepairDockVo', (event, args) => {
+                console.log('test', args)
+            });
+
+            this.rout();
         });
     }
 
@@ -43,9 +47,22 @@ class APP {
     }
 
     rout() {
-        this.router('login-first', APP.WINDOWS_TO_WORKER);
-        this.router('login-first-finish', APP.WORKER_TO_WINDOWS);
-        this.router('login-second', APP.WINDOWS_TO_WORKER);
+        this.router('loginText', APP.WORKER_TO_WINDOWS);
+        this.router('loginFirstFinish', APP.WORKER_TO_WINDOWS);
+        this.router('loginSecondFinish', APP.WORKER_TO_WINDOWS);
+
+        this.router('updateUserResVo', APP.WORKER_TO_WINDOWS);
+        this.router('updateUserVo', APP.WORKER_TO_WINDOWS);
+        this.router('updateFleetVo', APP.WORKER_TO_WINDOWS);
+        this.router('updateUserShipVo', APP.WORKER_TO_WINDOWS);
+        this.router('updatePveExploreVo', APP.WORKER_TO_WINDOWS);
+        this.router('updateRepairDockVo', APP.WORKER_TO_WINDOWS);
+        this.router('updatePackages', APP.WORKER_TO_WINDOWS);
+
+        this.router('loginFirst', APP.WINDOWS_TO_WORKER);
+        this.router('loginSecond', APP.WINDOWS_TO_WORKER);
+
+
     }
 }
 
