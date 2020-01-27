@@ -124,3 +124,8 @@ export interface UserDataBean {
     friendVo: FriendVo,
     marketingData: MarketingData
 }
+
+export interface UpdateTaskVo {
+    taskCid: string,
+    condition: Array<Condition>
+}

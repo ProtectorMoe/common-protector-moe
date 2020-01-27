@@ -165,4 +165,20 @@ export class NetSender {
         return HmException.parse('peventGetPveData', request.buffer.toString());
     }
 
+    async exploreGetResult(map: string) {
+        const request = await this.yesHttp.connect({
+            url: this.urlBuilder(`explore/getResult/${map}/`),
+            zlib: true
+        });
+        return HmException.parse('explore/getResult/', request.buffer.toString());
+    }
+
+    async exploreStart(fleet: string, map: string) {
+        const request = await this.yesHttp.connect({
+            url: this.urlBuilder(`explore/start/${fleet}/${map}/`),
+            zlib: true
+        });
+        return HmException.parse('explore/start', request.buffer.toString());
+    }
+
 }

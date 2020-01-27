@@ -8,6 +8,10 @@
     export default {
         name: 'app',
         mounted() {
+            document.body.ondrop = function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            };
             if (window.global) {
                 this.$store.commit('init');
                 const ipcRenderer = window.electron.ipcRenderer;
@@ -18,14 +22,13 @@
                     'updateUserShipVo',
                     'updatePveExploreVo',
                     'updateRepairDockVo',
-                    'updatePackages'
+                    'updatePackages',
+                    'setLog'
                 ].forEach(value => {
                     ipcRenderer.removeAllListeners(value);
-                    (_ => {
-                        ipcRenderer.on(value, (_, args) => {
-                            this.$store.commit(value, args)
-                        })
-                    })()
+                    ipcRenderer.on(value, (_, args) => {
+                        this.$store.commit(value, args)
+                    })
                 })
 
             }

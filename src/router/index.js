@@ -4,6 +4,7 @@ import Router from 'vue-router';
 import Login from "@/components/Login";
 import Home from "@/components/Home";
 import Dashboard from "@/components/Dashboard";
+import PathSetting from "@/components/PathSetting";
 
 Vue.use(Router);
 
@@ -16,7 +17,7 @@ export default new Router({
         },
         {
             path: '/',
-            redirect: '/login'
+            redirect: '/path-setting'
         },
         {
             path: '/',
@@ -26,6 +27,10 @@ export default new Router({
                 path: '/dashboard',
                 component: Dashboard,
                 meta: { title: '系统首页' }
+            }, {
+                path: '/path-setting',
+                component: PathSetting,
+                meta: { title: '地图设置' }
             },]
         }
     ]

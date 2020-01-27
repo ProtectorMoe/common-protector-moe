@@ -23,7 +23,7 @@ a {
 
 .content-box {
     position: absolute;
-    left: 250px;
+    left: 70px;
     right: 0;
     top: 70px;
     bottom: 0;
@@ -194,4 +194,8 @@ a {
 
 .imp-text {
     color: #F56C6C;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }

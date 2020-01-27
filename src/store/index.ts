@@ -7,8 +7,9 @@ import {
     UserShipVO,
     UserVo
 } from "../../main/bean/net/user-data-bean";
-import {State} from "../../main/bean/game/dash-board";
+import {LogList, State} from "../../main/bean/game/dash-board";
 import {CopyParams, ObjectToMap} from "../../main/util/util";
+import {PveBuff, PveLevel, PveNode} from "../../main/bean/net/pve-bean";
 
 Vue.use(Vuex);
 
@@ -55,7 +56,7 @@ export default new Vuex.Store({
                 name: "6-1炸鱼",
                 num: "10/500",
                 fleet: "第一舰队",
-                state: true
+                state: true,
             },
             {
                 name: "4-3偷铝",
@@ -84,7 +85,7 @@ export default new Vuex.Store({
                 time: "19:21:19",
                 title: "出征",
                 dec: `1-5 点 A 评价:SS 出船:<戈本>`,
-                type: ""
+                type: "",
             },
             {
                 date: "1/21",
@@ -93,7 +94,12 @@ export default new Vuex.Store({
                 dec: `出新船 <戈本>`,
                 type: "danger-row"
             },
-        ]
+        ],
+        pve: {
+            pveNode: {},
+            pveLevel: {},
+            pveBuff: {},
+        }
     },
     mutations: {
         init(state: State) {
@@ -108,6 +114,9 @@ export default new Vuex.Store({
                 SLNum: 0,
                 dpoilsNum: 0
             }
+        },
+        setLog(state: State, log: LogList) {
+            this.logList.push(log);
         },
         updateUserResVo(state: State, data: UserResVo) {
             state.userResVo = data;
@@ -133,6 +142,11 @@ export default new Vuex.Store({
         },
         updatePackages(state: State, data) {
             state.packages = ObjectToMap(data);
+        },
+        updatePveData(state: State, data) {
+            state.pve.pveBuff = data.pveBuff;
+            state.pve.pveLevel = data.pveLevel;
+            state.pve.pveNode = data.pveNode;
         }
 
     }

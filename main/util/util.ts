@@ -1,3 +1,4 @@
+/* eslint-disable */
 export function GetSeedRandom(seed: number, min: number, max: number) {
     max = max || 1;
     min = min || 0;
@@ -35,4 +36,15 @@ export function ArrayToList<T>(a: Array<T>) {
     const l = [];
     a.forEach(value => l.push(value));
     return l;
+}
+
+export function SetLog(dec: string, type='') {
+    const {ipcRenderer} = require('electron');
+    const date = new Date();
+    ipcRenderer.send('setLog', {
+        date: `${date.getMonth()}/${date.getDay()}`,
+        time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+        dec,
+        type
+    });
 }

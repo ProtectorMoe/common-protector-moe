@@ -64,7 +64,7 @@
                 </el-card>
 
 <!--                任务列表-->
-                <el-card id="task-list" shadow="hover" :style="{height: taskListCard.height + 'px'}">
+                <el-card id="task-list" shadow="hover">
                     <div slot="header" class="clearfix">
                         <span>任务列表</span>
                     </div>
@@ -101,8 +101,6 @@
                             </template>
                         </el-table-column>
                     </el-table>
-
-
                 </el-card>
             </el-col>
 
@@ -174,7 +172,7 @@
                 </el-row>
 
 <!--                日志-->
-                <el-card id="log-list" shadow="hover" :style="{height: logCard.height + 'px'}">
+                <el-card id="log-list" shadow="hover">
                     <div slot="header" class="clearfix">
                         <span>日志</span>
                     </div>
@@ -212,13 +210,6 @@ export default {
     name: 'dashboard',
     data() {
         return {
-            name: localStorage.getItem('ms_username'),
-            taskListCard: {
-                height: 352
-            },
-            logCard: {
-                height: 503
-            },
         };
     },
     mounted() {
@@ -229,17 +220,17 @@ export default {
         getTableClass({row}) {
             return row.type
         },
-        getTop(e) {
-            let offset = e.offsetTop;
-            if (e.offsetParent != null)
-                offset += this.getTop(e.offsetParent);
-            return offset;
-        },
         autoSetHeight() {
+            function getTop(e) {
+                let offset = e.offsetTop;
+                if (e.offsetParent != null)
+                    offset += getTop(e.offsetParent);
+                return offset;
+            }
             const task = document.getElementById('task-list');
-            this.taskListCard.height = document.body.clientHeight - this.getTop(task) - 25;
+            task.style.height = `${document.body.clientHeight - getTop(task) - 25}px`;
             const log = document.getElementById('log-list');
-            this.logCard.height = document.body.clientHeight - this.getTop(log) - 25;
+            log.style.height = `${document.body.clientHeight - getTop(log) - 25}px`
         }
     },
     computed: {

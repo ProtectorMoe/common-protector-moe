@@ -1,4 +1,5 @@
 import {FleetVo, PveExploreLevels, RepairDockVo, UserResVo, UserShipVO, UserVo} from "../net/user-data-bean";
+import {PveBuff, PveLevel, PveNode} from "../net/pve-bean";
 
 export interface LogList {
     date: string,
@@ -38,6 +39,11 @@ export interface State {
     pveExploreVo: Map<string, PveExploreLevels>,
     repairDockVo: Array<RepairDockVo>,
     packages: Map<number, number>,
+    pve: {
+        pveNode: object,
+        pveLevel: object,
+        pveBuff: object,
+    }
 
     // 特定前端数据
     isFirstLogin: boolean;

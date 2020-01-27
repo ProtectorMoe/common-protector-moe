@@ -19,6 +19,7 @@
     "uuid4": "^1.1.4",
     "vue": "^2.6.10",
     "vue-schart": "^2.0.0",
+    "vuedraggable": "^2.23.2",
     "vuex": "^3.1.2"
   },
   "devDependencies": {

@@ -53,7 +53,7 @@
 export default {
     data() {
         return {
-            collapse: false,
+            collapse: true,
             items: [
                 {
                     icon: 'el-icon-s-home',
@@ -93,13 +93,6 @@ export default {
             return this.$route.path.replace('/', '');
         }
     },
-    created() {
-        // 通过 Event this.$bus 进行组件间通信，来折叠侧边栏
-        this.$bus.$on('collapse', msg => {
-            this.collapse = msg;
-            this.$bus.$emit('collapse-content', msg);
-        });
-    }
 };
 </script>
 

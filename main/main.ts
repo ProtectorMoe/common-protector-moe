@@ -58,7 +58,7 @@ class APP {
         this.router('updatePveExploreVo', APP.WORKER_TO_WINDOWS);
         this.router('updateRepairDockVo', APP.WORKER_TO_WINDOWS);
         this.router('updatePackages', APP.WORKER_TO_WINDOWS);
-
+        this.router('setLog', APP.WORKER_TO_WINDOWS);
         this.router('loginFirst', APP.WINDOWS_TO_WORKER);
         this.router('loginSecond', APP.WINDOWS_TO_WORKER);
 
