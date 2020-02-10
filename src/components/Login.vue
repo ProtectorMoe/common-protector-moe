@@ -16,8 +16,7 @@
                     <el-input
                             type="password"
                             placeholder="password"
-                            v-model="user.password"
-                    >
+                            v-model="user.password">
                         <el-button slot="prepend" icon="el-icon-unlock"></el-button>
                     </el-input>
 
@@ -68,12 +67,12 @@
                 ipcRenderer.removeAllListeners('loginText');
                 const store = new window.Store();
                 this.user = {
-                    username: store.get('user.username'),
-                    password: store.get('user.password'),
-                    serverType: store.get('user.serverType')
+                    username: store.get('user.username') || "",
+                    password: store.get('user.password')  || "",
+                    serverType: store.get('user.serverType') || "0"
                 };
                 ipcRenderer.on('loginFirstFinish', (_, args) => {
-                    if (args.error === 0) {
+                    if (args.error == 0) {
                         this.defaultServer = args.value.defaultServer;
                         this.serverList = [];
                         args.value.serverList.forEach(value => {
@@ -87,11 +86,11 @@
                         });
                         this.openServerList = true;
                     } else {
-                        console.log(args);
+                        this.$message.error(args.errmsg);
                         this.loading = false;
                     }
                 });
-                ipcRenderer.on('loginSecondFinish', _ => {
+                ipcRenderer.on('loginSecondFinish', () => {
                     this.$router.push('/dashboard')
                 });
                 ipcRenderer.on('loginText', (_, args) => {

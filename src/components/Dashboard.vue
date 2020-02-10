@@ -96,8 +96,8 @@
                                 width="60"
                                 fixed="right">
                             <template>
-                                <i class="el-icon-top"></i>
-                                <i class="el-icon-delete"></i>
+                                <i class="el-icon-top table-link"></i>
+                                <i class="el-icon-delete table-link"></i>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -339,6 +339,10 @@ export default {
     bottom: 1px;
     color: #C0C4CC;
     font-size: 12px;
+}
+
+.table-link {
+    margin-left: 10px;
 }
 
 </style>

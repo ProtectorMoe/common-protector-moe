@@ -5,6 +5,7 @@ import Login from "@/components/Login";
 import Home from "@/components/Home";
 import Dashboard from "@/components/Dashboard";
 import PathSetting from "@/components/PathSetting";
+import Challenge from "@/components/Challenge";
 
 Vue.use(Router);
 
@@ -13,11 +14,12 @@ export default new Router({
     routes: [
         {
             path: "/login",
+            name: 'login',
             component: Login
         },
         {
             path: '/',
-            redirect: '/path-setting'
+            redirect: '/challenge'
         },
         {
             path: '/',
@@ -25,12 +27,19 @@ export default new Router({
             meta: {title: '自述文件'},
             children: [{
                 path: '/dashboard',
+                name: 'dashboard',
                 component: Dashboard,
                 meta: { title: '系统首页' }
             }, {
                 path: '/path-setting',
+                name: 'path-setting',
                 component: PathSetting,
                 meta: { title: '地图设置' }
+            },{
+                path: '/challenge',
+                name: 'challenge',
+                component: Challenge,
+                meta: { title: '出征' }
             },]
         }
     ]

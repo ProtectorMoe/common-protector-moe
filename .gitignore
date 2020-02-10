@@ -25,7 +25,8 @@ yarn-error.log*
 
 /src/store/**/*.js
 /src/store/**/*.js.map
+/path
 
 *.d.ts
-
-test.*
+*.png
+^test.*

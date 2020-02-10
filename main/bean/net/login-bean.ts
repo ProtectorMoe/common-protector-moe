@@ -16,6 +16,7 @@ export interface LoginVersionBean {
 
 export interface LoginBean {
     error: number,
+    errmsg: string,
     access_token: string,
     token: string
 }

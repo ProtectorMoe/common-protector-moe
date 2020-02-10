@@ -8,18 +8,15 @@ const gameConfig: GameConfig = GameConfig.getInstance();
 // 监听第一次登录数据
 ipcRenderer.on('loginFirst', (_, arg) => {
     (async () => {
-        gameLogin.initialize(arg.username, arg.password, arg.serverType);
-        const serverList = gameLogin.firstLogin();
-        serverList.then(value => {
-            gameConfig.userId = value.userId;
-            ipcRenderer.send('loginFirstFinish', {error: 0, value})
-        }).catch(reason => {
-            console.error(reason);
-            ipcRenderer.send('loginFirstFinish', {error: 1, reason})
-        })
-    })().catch(reason => {
-        console.error(reason)
-    });
+        try {
+            console.log(arg);
+            gameLogin.initialize(arg.username, arg.password, arg.serverType);
+            const serverList = await gameLogin.firstLogin();
+            ipcRenderer.send('loginFirstFinish', {error: 0, value: serverList})
+        } catch (e) {
+            ipcRenderer.send('loginFirstFinish', {error: 1, errmsg:e.toString()})
+        }
+    })();
 });
 
 ipcRenderer.on('loginSecond', (_, host) => {

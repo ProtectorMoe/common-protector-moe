@@ -129,3 +129,13 @@ export interface UpdateTaskVo {
     taskCid: string,
     condition: Array<Condition>
 }
+
+export interface RubdownBean {
+    repairDockVo: Array<RepairDockVo>
+}
+
+export interface SupplyBean {
+    userVo: UserVo,
+    shipVO: Array<ShipVO>,
+    updateTaskVo: Array<UpdateTaskVo>
+}

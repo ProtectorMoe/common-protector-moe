@@ -6,7 +6,7 @@ import {
     PveExploreLevels,
     RepairDockVo, ShipVO,
     TaskVo,
-    UpdateTaskVo, UserDataBean,
+    UpdateTaskVo, UserDataBean, UserResVo,
     UserShipVO, UserVo
 } from "../bean/net/user-data-bean";
 import {MapToObject} from "../util/util";
@@ -20,19 +20,16 @@ export class UserData {
         return UserData.instance;
     }
 
-    // 基础数据
-    userBase: UserVo;
 
-    parseUserData(userData: UserDataBean) {
-        this.userBase = userData.userVo;
-        this.fleetVoInit(userData.fleetVo);
-        this.userShipVoInit(userData.userShipVO);
-        this.pveExploreVoInit(userData.pveExploreVo.levels);
-        this.packagesInit(userData.packageVo);
-        this.repairDockVoInit(userData.repairDockVo);
-        this.unlockedShipInit(userData.unlockShip);
-        this.taskVoInit(userData.taskVo);
-        ipcRenderer.send('updateUserVo', userData.userVo);
+
+    // ----------------- 基础数据 --------------
+    userBase: UserVo;
+    userVoUpdate(userVo: UserVo | UserResVo) {
+        this.userBase.oil = userVo.oil;
+        this.userBase.ammo = userVo.ammo;
+        this.userBase.steel = userVo.steel;
+        this.userBase.aluminium = userVo.aluminium;
+        ipcRenderer.send('updateUserVo', this.userBase);
     }
 
     // ----------------- 点数数据 -----------------
@@ -56,7 +53,6 @@ export class UserData {
     userShipVo: Map<number, UserShipVO> = new Map<number, UserShipVO>();
     userShipVoInit(ships: Array<ShipVO | UserShipVO>) {
         ships.forEach(value => this.userShipVo.set(value.id, value));
-        console.log(this.userShipVo);
         ipcRenderer.send('updateUserShipVo', MapToObject(this.userShipVo));
     }
     userShipAdd(ship: UserShipVO | ShipVO) {
@@ -99,10 +95,12 @@ export class UserData {
         taskVos.forEach(value => this.taskVo.set(value.taskCid, value))
     }
     updateTaskVo(updateTaskVo: Array<UpdateTaskVo>) {
-        updateTaskVo.forEach(value => {
-            const task: TaskVo = this.taskVo.get(value.taskCid);
-            task.condition = value.condition;
-        })
+        if (updateTaskVo) {
+            updateTaskVo.forEach(value => {
+                const task: TaskVo = this.taskVo.get(value.taskCid);
+                task.condition = value.condition;
+            })
+        }
     }
     // ------------------------ 装备数据 --------------------------
     equipmentVo: Map<number, EquipmentVo> = new Map<number, EquipmentVo>();
@@ -117,6 +115,19 @@ export class UserData {
         });
         return sum
     }
+
+    parseUserData(userData: UserDataBean) {
+        this.userBase = userData.userVo;
+        this.fleetVoInit(userData.fleetVo);
+        this.userShipVoInit(userData.userShipVO);
+        this.pveExploreVoInit(userData.pveExploreVo.levels);
+        this.packagesInit(userData.packageVo);
+        this.repairDockVoInit(userData.repairDockVo);
+        this.unlockedShipInit(userData.unlockShip);
+        this.taskVoInit(userData.taskVo);
+        ipcRenderer.send('updateUserVo', userData.userVo);
+    }
+
 }
 
 

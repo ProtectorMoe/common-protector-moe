@@ -1,11 +1,12 @@
-const {ipcRenderer} = require('electron');
+import {GameConstant} from "./game-constant";
 import {GameConfig} from "./game-config";
 import {NetSender} from "./net-sender";
 import {LoginServerListBean, LoginUserInfoBean} from "../bean/net/login-bean";
 import {UserData} from "./user-data";
 import {UserDataBean} from "../bean/net/user-data-bean";
-
+const {ipcRenderer} = require('electron');
 const Store = require('electron-store');
+const store = new Store();
 
 export class GameLogin {
     static ins: GameLogin;
@@ -44,6 +45,7 @@ export class GameLogin {
                 this.gameConfig.urlVersion = 'http://version.jr.moefantasy.com/index/checkVer/4.1.0/100015/2&version=4.1.0&channel=100015&market=2';
                 break;
         }
+        console.log(this.gameConfig.urlVersion)
     }
 
     async checkToken(token: string) {
@@ -62,7 +64,8 @@ export class GameLogin {
             username: this.username
         };
         const loginBean = await this.netSender.loginLogin(data);
-        if (loginBean.error !== 0) throw new Error(`登录失败, 错误代码${loginBean.error}`);
+        if (loginBean.error != 0)
+            throw new Error(`-${loginBean.error}: ${loginBean.errmsg}`);
         return loginBean.access_token || loginBean.token;
     }
 
@@ -71,12 +74,17 @@ export class GameLogin {
         ipcRenderer.send('loginText', '请求游戏版本...');
         const loginVersion = await this.netSender.getGameVersion();
         this.gameConfig.version = loginVersion.version.newVersionId;
-        this.gameConfig.resVersion = loginVersion.version.DataVersion;
         this.gameConfig.loginHead = loginVersion.loginServer;
         this.gameConfig.loginApiHead = loginVersion.hmLoginServer;
+        // 检测res日期
+        const constant = GameConstant.getInstance();
+        if (parseInt(store.get('resVersion', 114514)) < parseInt(loginVersion.version.DataVersion) || !constant.init()) {
+            const init = await this.netSender.getInitData();
+            constant.init(init);
+            store.set('resVersion', parseInt(loginVersion.version.DataVersion))
+        }
         // 验证token
         ipcRenderer.send('loginText', '请求用户token...');
-        const store = new Store();
         let token = this.token || await this.getToken();
         await this.checkToken(token);
         store.set({

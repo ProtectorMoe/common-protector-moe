@@ -1,16 +1,15 @@
 <template>
     <div class="drag-ul">
+        <div :class="{'drag-il-flag': true, 'line30': !active, 'line60': active}"> {{flag}} </div>
         <div class="drag-ul-flag">
-            <div class="drag-il-flag"> {{flag}} </div>
             <el-tag :type='nodeTypeColor'
-                    class="drag-il-tag">{{nodeTypeName}}</el-tag>
+                    class="drag-il-tag" style="position: relative; margin-left: 50px">{{nodeTypeName}}</el-tag>
             <el-tag type="success" :class="{'drag-il-tag': true, 'drag-il-tag-hidden': canRoundabout!=1}">可迂回</el-tag>
             <el-tag type="warning" :class="{'drag-il-tag': true, 'drag-il-tag-hidden': hasNoBuff}">有战况</el-tag>
-            <el-tag v-show="active">{{['', '单纵', '复纵', '轮形', '梯形', '单横'][format]}}</el-tag>
-
+            <el-tag class="drag-il-tag" v-show="active">{{['', '单纵', '复纵', '轮形', '梯形', '单横'][format]}}</el-tag>
         </div>
         <div class="drag-ul-detail" v-show="active">
-            <el-tag style="margin-left: 33px" type="success" :class="{'drag-il-tag': true, 'drag-il-tag-hidden': !night}" class="drag-il-tag">夜战</el-tag>
+            <el-tag style="margin-left: 50px" type="success" :class="{'drag-il-tag': true, 'drag-il-tag-hidden': !night}" class="drag-il-tag">夜战</el-tag>
             <el-tag :class="{'drag-il-tag': true, 'drag-il-tag-hidden': !roundabout}" class="drag-il-tag">迂回</el-tag>
             <el-tag :class="{'drag-il-tag': true, 'drag-il-tag-hidden': !buff}" type="success" class="drag-il-tag">战况</el-tag>
             <el-tag :class="{'drag-il-tag': true, 'drag-il-tag-hidden': !detail}" class="drag-il-tag">特殊阵营SL</el-tag>
@@ -23,7 +22,9 @@
         name: "NodeActive",
         props: ['flag', 'nodeType', 'format', 'canRoundabout', 'hasNoBuff', 'active', 'night', 'roundabout', 'buff', 'detail'],
         data() {
-            return {}
+            return {
+
+            }
         },
         methods: {
 
@@ -41,6 +42,7 @@
 
 <style scoped>
     .drag-ul {
+        position:relative;
         border: 1px #e1e4e8 solid;
         padding: 10px;
         margin: 5px 0 10px;
@@ -54,10 +56,11 @@
     }
 
     .drag-il-flag {
+        position: absolute;
+        float: left;
         font-size: 20px;
         margin-left: 10px;
         line-height: 30px;
-        float: left;
     }
 
     .drag-il-tag {
@@ -74,11 +77,20 @@
         height: 30px;
     }
 
+
+    .drag-ul-detail {
+        margin-top: 5px;
+    }
+
     .drag-il-tag-hidden {
         visibility: hidden;
     }
 
-    .drag-ul-detail {
-        margin-top: 5px;
+    .line30 {
+        line-height: 30px;
+    }
+
+    .line60 {
+        line-height: 65px;
     }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="logo">
-            <img style="vertical-align: middle; margin-top: -6px" src="../assets/img/icon.png" width="45" height="45">
+            <img style="vertical-align: middle; margin-top: -6px" src="../assets/img/icon.png" width="35" height="35">
             <span>护萌宝</span>
         </div>
     </div>
@@ -27,13 +27,13 @@ export default {
 }
 .header .logo {
     float: left;
-    margin-left: 10px;
+    margin-left: 15px;
     width: 250px;
     line-height: 70px;
 }
 
 .logo span {
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 .user-avator img {

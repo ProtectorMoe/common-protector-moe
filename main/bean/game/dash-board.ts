@@ -1,5 +1,5 @@
 import {FleetVo, PveExploreLevels, RepairDockVo, UserResVo, UserShipVO, UserVo} from "../net/user-data-bean";
-import {PveBuff, PveLevel, PveNode} from "../net/pve-bean";
+import {ShipCardWu} from "../net/init-data-bean";
 
 export interface LogList {
     date: string,
@@ -30,6 +30,7 @@ export interface SelfInfo {
     gameVersion: string
 }
 
+
 export interface State {
     // 需要存的后端数据
     userResVo: UserResVo,
@@ -43,7 +44,8 @@ export interface State {
         pveNode: object,
         pveLevel: object,
         pveBuff: object,
-    }
+    },
+    shipCardWu: Map<number, ShipCardWu>,
 
     // 特定前端数据
     isFirstLogin: boolean;

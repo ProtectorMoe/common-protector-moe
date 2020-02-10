@@ -51,20 +51,16 @@ export class YesHttp {
 
     public connect(options: YesHttpOptions){
         const {
-            url = "", method = "GET", body, form, params = {},
+            url = "", method = "GET", body, form, params = {}, zlib = false,
             headers = {
                 "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 5.1.1; oppo a53 Build/LYZ28N)",
                 "Accept-Encoding": "identity"
-            }, zlib = false,
+            },
         } = options;
         const defaultOption = {
-            method,
-            headers: {
-                ...headers,
-                cookie: this.jar.loadForRequest(url)
-            },
+            method,form,
+            headers: {...headers, cookie: this.jar.loadForRequest(url)},
             body: body !== undefined? JSON.stringify(body): undefined,
-            form,
         };
         return new Promise<YesHttpReturn>((resolve, reject) => {
             const u = url + this.getParamString(params);
@@ -74,12 +70,10 @@ export class YesHttp {
                 statusCode: "0",
                 headers: {}
             };
-
             const req = request(u, defaultOption);
             req.on('data', chunk => {
                 response.buffer = Buffer.concat([response.buffer, chunk]);
             });
-
             req.on('response', message => {
                 response.headers = message.headers;
                 response.statusCode = message.statusCode;
@@ -88,14 +82,10 @@ export class YesHttp {
                     this.jar.saveFromResponse(url, headersArray);
                 }
             });
-
-
             req.on('end', () => {
                 if(zlib) {
                     zlibModel.unzip(response.buffer, (error, result) => {
-                        if (error) {
-                            throw new Error(`Unzip fail path:${url}`)
-                        }
+                        if (error) throw new Error(`Unzip fail path:${url}`);
                         response.buffer = result;
                         resolve(response)
                     })

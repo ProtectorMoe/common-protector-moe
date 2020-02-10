@@ -11,7 +11,9 @@
   <script>
     if (window.global) {
       global.electron = require('electron');
-      global.Store = require('electron-store');
+      global.path = require('path');
+      global.fs = require('fs');
+      global.Store = require('electron-store')
     }
   </script>
     <div id="app"></div>

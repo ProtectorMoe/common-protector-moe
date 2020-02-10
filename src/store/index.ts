@@ -10,6 +10,7 @@ import {
 import {LogList, State} from "../../main/bean/game/dash-board";
 import {CopyParams, ObjectToMap} from "../../main/util/util";
 import {PveBuff, PveLevel, PveNode} from "../../main/bean/net/pve-bean";
+import {ShipCardWu} from "../../main/bean/net/init-data-bean";
 
 Vue.use(Vuex);
 
@@ -34,11 +35,14 @@ export default new Vuex.Store({
             shipNumTop: 120,
             equipmentNumTop: 500
         },
+
         fleetVo: new Map<string, FleetVo>(),
         userShipVo: new Map<number, UserShipVO>(),
         pveExploreVo: new Map<string, PveExploreLevels>(),
         repairDockVo: new Array<RepairDockVo>(),
         packages: new Map<number, number>(),
+        shipCardWu: new Map<number, ShipCardWu>(),
+
         selfInfo: {
             version: "1.0.0.0",
             gameVersion: "5.0"
@@ -99,7 +103,8 @@ export default new Vuex.Store({
             pveNode: {},
             pveLevel: {},
             pveBuff: {},
-        }
+        },
+
     },
     mutations: {
         init(state: State) {
@@ -147,6 +152,10 @@ export default new Vuex.Store({
             state.pve.pveBuff = data.pveBuff;
             state.pve.pveLevel = data.pveLevel;
             state.pve.pveNode = data.pveNode;
+        },
+
+        setShipCardWu(state: State, data) {
+            state.shipCardWu = ObjectToMap(data);
         }
 
     }
