@@ -1,9 +1,6 @@
-var a = [3, 654, 31, 456, 789, 10, 31, 3, 1, 46, 7];
-
-for (let i in a) {
-    console.log(i, a[i]);
-    if (a[i] % 2 == 0) {
-        a.splice(i, 1);
+const a = ['124214', '12412354', '435q2345'];
+for (const i in a) {
+    if (a.hasOwnProperty(i)) {
+        console.log(i)
     }
 }
-console.log(a);

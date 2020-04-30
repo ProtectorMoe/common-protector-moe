@@ -14,7 +14,7 @@ tsc -w
 
 然后使用
 ```shell script
-npm run electron
+electron .
 ```
 启动electron窗口服务
 

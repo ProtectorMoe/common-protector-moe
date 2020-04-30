@@ -59,6 +59,8 @@ class APP {
         this.router("updateRepairDockVo", APP.WORKER_TO_WINDOWS);
         this.router("updatePackages", APP.WORKER_TO_WINDOWS);
         this.router("setLog", APP.WORKER_TO_WINDOWS);
+        this.router("setDetailLog", APP.WORKER_TO_WINDOWS);
+
         this.router("setShipCardWu", APP.WORKER_TO_WINDOWS);
 
         this.router("loginFirst", APP.WINDOWS_TO_WORKER);

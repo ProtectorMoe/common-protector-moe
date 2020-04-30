@@ -15,6 +15,7 @@ export class Setting {
         dismantleStar: Array<string>;
         dismantleSwitch: boolean;
         dismantleType: Array<string>;
+        roundaboutMax: number
     };
 
     init() {
@@ -23,6 +24,7 @@ export class Setting {
         this.settingBean.dismantleStar = this.store.get('setting.dismantleStar', []);
         this.settingBean.dismantleSwitch = this.store.get('setting.dismantleSwitch', false);
         this.settingBean.dismantleType = this.store.get('setting.dismantleType', []);
+        this.settingBean.roundaboutMax = this.store.get('setting.roundaboutMax', 2);
     }
 
     save() {

@@ -4,4 +4,6 @@ export interface SettingBean {
     dismantleShip: string,
     dismantleType: Array<string>,
     dismantleStar: Array<string>,
+
+    roundaboutMax: number
 }

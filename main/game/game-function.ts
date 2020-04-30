@@ -3,10 +3,12 @@ import { UserData } from "./user-data";
 import {
     PveExploreLevels,
     RubdownBean,
-    SupplyBean
+    SupplyBean,
+    UserShipVO
 } from "../bean/net/user-data-bean";
 import { GetExploreBean, StartExploreBean } from "../bean/net/explore-bean";
-import { Delay, SetLog } from "../util/util";
+import { Delay, SetLog, zip } from "../util/util";
+import { FastRepairBean } from "main/bean/net/common-bean";
 
 const netSender = NetSender.getInstance();
 const userData = UserData.getInstance();
@@ -37,7 +39,8 @@ export class GameFunction {
                         map
                     );
                     SetLog(
-                        `[远征] 远征${map.toString().replace("000", "-")} ${
+                        "远征",
+                        `远征${map.toString().replace("000", "-")} ${
                             getExploreBean.bigSuccess === 1 ? "大" : ""
                         }成功`
                     );
@@ -97,7 +100,8 @@ export class GameFunction {
                     ) {
                         const date = new Date(parseInt(value.endTime));
                         SetLog(
-                            `[修理] 修理 ${
+                            "[修理]",
+                            `修理 ${
                                 userData.userShipVo.get(shipId).title
                             } 到 ${date.getHours()}:${date.getMinutes()}`
                         );
@@ -115,16 +119,55 @@ export class GameFunction {
 
     async checkSupply(ships: Array<number>) {
         try {
-            await Delay(2000);
-            const supplyBean: SupplyBean = await netSender.boatSupplyBoats(
+            if (
                 ships
-            );
-            userData.updateTaskVo(supplyBean.updateTaskVo);
-            userData.userVoUpdate(supplyBean.userVo);
-            userData.userShipVoInit(supplyBean.shipVO);
+                    .map(value => userData.userShipVo.get(value))
+                    .filter(value => {
+                        value.battleProps.oil != value.battlePropsMax.oil &&
+                            value.battleProps.ammo !=
+                                value.battlePropsMax.ammo &&
+                            value.battleProps.aluminium !=
+                                value.battlePropsMax.aluminium;
+                    }).length == 0
+            ) {
+                await Delay(2000);
+                const supplyBean: SupplyBean = await netSender.boatSupplyBoats(
+                    ships
+                );
+                userData.updateTaskVo(supplyBean.updateTaskVo);
+                userData.userVoUpdate(supplyBean.userVo);
+                userData.userShipVoInit(supplyBean.shipVO);
+            }
         } catch (e) {
-            console.log("checkSupply", e);
+            console.error("checkSupply", e);
             throw e;
+        }
+    }
+
+    async checkRepair(ships: Array<number>, persent: Array<number>) {
+        const needRepair: Array<number> = zip(
+            ships.map(v => userData.userShipVo.get(v)),
+            persent
+        )
+            .filter(v => {
+                (v.first.battleProps.hp / v.first.battlePropsMax.hp) * 100 <
+                    v.second;
+            })
+            .map(v => v.first.id);
+        if (needRepair.length != 0) {
+            const fastRepairBean: FastRepairBean = await netSender.boatInstantRepairShips(
+                needRepair
+            );
+            userData.packagesInit(fastRepairBean.packageVo);
+            userData.userShipVoInit(fastRepairBean.shipVOS);
+            userData.userVoUpdate(fastRepairBean.userVo);
+            userData.updateTaskVo(fastRepairBean.updateTaskVo);
+            SetLog(
+                "[修理]",
+                `修理船只:${needRepair
+                    .map(v => userData.userShipVo.get(v).title)
+                    .join(" ")}`
+            );
         }
     }
 }

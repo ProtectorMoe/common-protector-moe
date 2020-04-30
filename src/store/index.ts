@@ -9,7 +9,6 @@ import {
 } from "../../main/bean/net/user-data-bean";
 import {LogList, State} from "../../main/bean/game/dash-board";
 import {CopyParams, ObjectToMap} from "../../main/util/util";
-import {PveBuff, PveLevel, PveNode} from "../../main/bean/net/pve-bean";
 import {ShipCardWu} from "../../main/bean/net/init-data-bean";
 
 Vue.use(Vuex);
@@ -73,6 +72,13 @@ export default new Vuex.Store({
             {
                 date: "1/21",
                 time: "19:19:19",
+                title: "出征",
+                dec: "进点A → 继续",
+                type: "info-row"
+            },
+            {
+                date: "1/21",
+                time: "19:19:19",
                 title: "主线程",
                 dec: "主线程开启",
                 type: ""
@@ -110,7 +116,13 @@ export default new Vuex.Store({
         init(state: State) {
             console.log("[Vuex] 初始化储存");
             state.taskList = [];
-            state.logList = [];
+            state.logList = [{
+                date: "",
+                time: "",
+                title: "",
+                dec: "",
+                type: "info-row"
+            }];
             state.counter = {
                 challengeNum: 0,
                 battleNum: 0,
@@ -121,7 +133,10 @@ export default new Vuex.Store({
             }
         },
         setLog(state: State, log: LogList) {
-            this.logList.push(log);
+            state.logList.push(log);
+        },
+        setDetailLog(state: State, log: LogList) {
+            state.logList[0] = {...log, type: 'info-row'}
         },
         updateUserResVo(state: State, data: UserResVo) {
             state.userResVo = data;

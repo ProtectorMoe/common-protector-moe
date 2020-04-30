@@ -24,7 +24,8 @@ export default {
                 "updatePveExploreVo",
                 "updateRepairDockVo",
                 "updatePackages",
-                "setLog"
+                "setLog",
+                "setDetailLog"
             ].forEach(value => {
                 ipcRenderer.removeAllListeners(value);
                 ipcRenderer.on(value, (_, args) => {

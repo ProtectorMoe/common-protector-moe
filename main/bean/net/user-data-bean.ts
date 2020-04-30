@@ -1,10 +1,10 @@
 export interface BattleProps {
     hp: number,
+    oil: number,
+    ammo: number,
+    aluminium: number
 }
 
-export interface BattlePropsMax {
-    hp: number,
-}
 
 export interface UserShipVO {
     id: number,
@@ -17,7 +17,7 @@ export interface UserShipVO {
     shipCid: number,
     type: number,
     battleProps: BattleProps,
-    battlePropsMax: BattlePropsMax
+    battlePropsMax: BattleProps
 }
 
 export interface ShipVO extends UserShipVO{

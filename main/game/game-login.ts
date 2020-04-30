@@ -108,6 +108,5 @@ export class GameLogin {
         // 加载点数数据
         const pveData = await this.netSender.pveGetPveData();
         userData.pveDataInit(pveData);
-        ipcRenderer.send('loginSecondFinish');
     }
 }

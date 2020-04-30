@@ -62,7 +62,7 @@ export class YesHttp {
             headers: {...headers, cookie: this.jar.loadForRequest(url)},
             body: body !== undefined? JSON.stringify(body): undefined,
         };
-        return new Promise<YesHttpReturn>((resolve, reject) => {
+        return new Promise<YesHttpReturn>(resolve => {
             const u = url + this.getParamString(params);
             this.interceptor.onRequest(u, defaultOption);
             const response: YesHttpReturn = {

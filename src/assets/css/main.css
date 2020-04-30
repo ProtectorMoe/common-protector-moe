@@ -199,3 +199,25 @@ a {
 ::-webkit-scrollbar {
     display: none;
 }
+
+.el-table .info-row {
+    animation: change 3s linear 0s infinite;
+}
+
+@keyframes change {
+    0% {
+        background: #DCDFE6;
+    }
+    25% {
+        background: #E4E7ED;
+    }
+    50% {
+        background: #EBEEF5;
+    }
+    75% {
+        background: #E4E7ED;
+    }
+    100% {
+        background: #DCDFE6;
+    }
+}
